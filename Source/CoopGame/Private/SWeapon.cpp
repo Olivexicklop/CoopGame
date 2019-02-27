@@ -12,6 +12,8 @@ ASWeapon::ASWeapon()
 
 	meshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	RootComponent = meshComp;
+
+	MuzzleSocketName = "MuzzleSocket";
 }
 
 // Called when the game starts or when spawned
@@ -48,9 +50,21 @@ void ASWeapon::Fire()
 
 
 			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShortDirection, Hit, MyOwner->GetInstigatorController(), this, damageType);
+
+			if (ImpactEffect)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+
+			}
 		}
 
 		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
+
+		if (MuzzleEffect)
+		{
+			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, meshComp, MuzzleSocketName);
+		}
+		
 	}
 }
 

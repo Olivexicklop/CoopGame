@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Particles/ParticleSystem.h"
 #include "SWeapon.generated.h"
+
 
 class USkeletalMeshComponent;
 class UDamageType;
-
+class UParticleSystem;
 
 UCLASS()
 class COOPGAME_API ASWeapon : public AActor
@@ -31,6 +33,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<UDamageType> damageType;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FName MuzzleSocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* MuzzleEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* ImpactEffect;
+
 
 public:	
 	// Called every frame
