@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "SWeapon.h"
 
 
 // Sets default values
@@ -22,7 +23,7 @@ ASCharacter::ASCharacter()
 	cameraComp->SetupAttachment(springArmComp);
 
 	ZoomedFOV = 65.0f;
-
+	ZoomInterpSpeed = 20;
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +32,19 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	DefaultFOV = cameraComp->FieldOfView;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+
+	currentWeapon = GetWorld()->SpawnActor<ASWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	if (currentWeapon)
+	{
+		currentWeapon->SetOwner(this);
+		currentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+	}
+
 
 	
 }
@@ -67,14 +81,28 @@ void ASCharacter::EndZoom()
 	bShouldZoom = false;
 }
 
+void ASCharacter::Fire()
+{
+	if (currentWeapon)
+	{
+		currentWeapon->Fire();
+	}
+}
+
+
+
+
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	float currentFOV = bShouldZoom ? ZoomedFOV : DefaultFOV;
+	float targetFOV = bShouldZoom ? ZoomedFOV : DefaultFOV;
 
-	cameraComp->SetFieldOfView(currentFOV);
+	float newFov = FMath::FInterpTo(cameraComp->FieldOfView, targetFOV, DeltaTime, ZoomInterpSpeed);
+
+	cameraComp->SetFieldOfView(newFov);
 
 
 }
@@ -95,6 +123,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::Fire);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const

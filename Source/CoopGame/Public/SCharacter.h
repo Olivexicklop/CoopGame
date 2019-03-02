@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class ASWeapon;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -43,9 +44,22 @@ protected:
 
 	float DefaultFOV;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.0, ClampMax = 100))
+	float ZoomInterpSpeed;
+
 	void BeginZoom();
 
 	void EndZoom();
+
+	ASWeapon* currentWeapon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	TSubclassOf<ASWeapon> StarterWeaponClass;
+
+	
+
+	void Fire();
+
 
 public:	
 	// Called every frame
@@ -55,5 +69,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual FVector GetPawnViewLocation() const override;
+	
 	
 };
