@@ -22,6 +22,8 @@ public:
 
 protected:
 
+	virtual void BeginPlay() override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* meshComp;
 
@@ -39,7 +41,11 @@ protected:
 	UParticleSystem* MuzzleEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	UParticleSystem* ImpactEffect;
+	UParticleSystem* DefaultImpactEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* FleshImpactEffect;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;
@@ -47,10 +53,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<UCameraShake> FireCamShake;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float BaseDamage;
+
+	void Fire();
+
+	FTimerHandle TimerHandle_BetweenShots;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float FireRate;
+
+	float LastFireTime;
+
+	float TimeBetweenShots;
 public:	
 	
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void Fire();
-	
+	void StartFire();
+
+	void StopFire();
 	
 };

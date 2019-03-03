@@ -58,7 +58,9 @@ protected:
 
 	
 
-	void Fire();
+	void StartFire();
+
+	void StopFire();
 
 
 public:	
