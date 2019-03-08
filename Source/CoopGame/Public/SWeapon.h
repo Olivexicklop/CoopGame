@@ -58,6 +58,9 @@ protected:
 
 	void Fire();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
+
 	FTimerHandle TimerHandle_BetweenShots;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
